@@ -20,7 +20,8 @@ public:
 	bool Initialize(char* windowTitle);
 
 	void Update();
-	void Render();
+	void beginRender();
+	void endRender();
 
 private:
 	static GLFWwindow* window;
