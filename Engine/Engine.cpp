@@ -14,7 +14,7 @@ Engine::~Engine()
 
 bool Engine::Initialize(char* windowTitle)
 {
-	//Check for error in intialization
+	//Check for error in GLFW intialization
 	if (!glfwInit())
 	{
 		cout << "Error Initializing GLFW" << endl;
@@ -37,8 +37,8 @@ bool Engine::Initialize(char* windowTitle)
 	glfwGetFramebufferSize(window, &width, &height);
 	glfwSwapInterval(1);
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	int xPos = (mode->width - SCREEN_HEIGHT) / 2;
-	int yPos = (mode->height - SCREEN_WIDTH) / 2;
+	int xPos = (mode->width - SCREEN_HEIGHT) / 2 ;
+	int yPos = (mode->height - SCREEN_WIDTH) / 2 ;
 	glfwSetWindowPos(window, xPos, yPos);
 
 	//GL Setup
@@ -49,7 +49,7 @@ bool Engine::Initialize(char* windowTitle)
 	glOrtho(0, width, 0, height, -10, 10);
 	glDepthRange(-10, 10);
 	glMatrixMode(GL_MODELVIEW);
-	
+
 	//Alpha Blending
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
