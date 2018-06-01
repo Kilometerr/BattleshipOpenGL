@@ -17,11 +17,15 @@ public:
 	
 	void Update();
 	void Render();
+	void SetScale(float x);
+	void SetScale(float x, float y);
 
 private:
 	Texture texture;
 	float xPos;
 	float yPos;
+	float xScale;
+	float yScale;
 };
 
 #endif 
