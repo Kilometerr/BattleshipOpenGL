@@ -12,6 +12,7 @@ class Engine
 public:
 	static int SCREEN_WIDTH;
 	static int SCREEN_HEIGHT;
+	static double GetDT();
 
 
 	Engine();
@@ -25,6 +26,10 @@ public:
 
 private:
 	static GLFWwindow* window;
+
+	//Delta time to have constant buffer
+	static double deltaTime;
+	double lastTime;
 };
 
 
