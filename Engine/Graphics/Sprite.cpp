@@ -29,8 +29,9 @@ void Sprite::Render()
 	glLoadIdentity();
 
 
-	//Translate
+	//Translate -> Scale
 	glTranslatef(xPos, yPos, 0);
+	glScalef(xScale, yScale, 1);
 
 	//Render
 	glColor4f(1, 1, 1, 1);
@@ -42,4 +43,16 @@ void Sprite::Render()
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Sprite::SetScale(float x)
+{
+	xScale = x;
+	yScale = x;
+}
+
+void Sprite::SetScale(float x, float y)
+{
+	xScale = x;
+	yScale = y;
 }
