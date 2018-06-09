@@ -1,8 +1,8 @@
 #include <iostream>
 #include <conio.h>
-#include <unistd.h>
-#include "game-engine/engine/GameEngine.h"
-#include "game-engine/engine/AiEngine.h"
+#include <windows.h>
+#include "logic/game-engine/GameEngine.h"
+#include "logic/ai-engine/AiEngine.h"
 
 int const ROUND_STATE_ERROR = -1;
 int const ROUND_STATE_MISS = 0;
@@ -57,7 +57,7 @@ int main() {
                 isEnd = true;
                 break;
         }
-        sleep(1);
+        //Sleep(1);
         Player* winner = game->getWinner();
         if (winner != nullptr) {
             isEnd = true;
