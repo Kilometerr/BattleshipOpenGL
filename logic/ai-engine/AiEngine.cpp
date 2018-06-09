@@ -10,8 +10,6 @@
 int const MAP_FIELD_STATE_EMPTY = 0;
 int const MAP_FIELD_STATE_SHIP = 1;
 
-int const SHIP_STATE_ALIVE = 0;
-
  void AiEngine::setShips(Player *player) {
     setShip(player, 0, 4);
     setShip(player, 1, 3);
