@@ -24,5 +24,4 @@ private:
      std::default_random_engine generator;
 };
 
-
 #endif //UNTITLED7_AIENGINE_H

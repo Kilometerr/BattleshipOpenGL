@@ -2,20 +2,19 @@ cmake_minimum_required(VERSION 3.10)
 project(BattleshipOpenGL)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+set(SDL2_PATH "C:\\Users\\<username>\\Downloads\\SDL2-devel-2.0.8-mingw\\SDL2-2.0.8\\x86_64-w64-mingw32")
+set(SDL2_DIR "C:\\Users\\<username>\\Downloads\\SDL2_image-devel-2.0.3-mingw.tar\\SDL2_image-devel-2.0.3-mingw\\SDL2_image-2.0.3\\x86_64-w64-mingw32")
 
-include_directories(Engine)
-include_directories(Engine/Graphics)
-include_directories(Engine/Graphics/SOIL/src)
-include_directories(Engine/IO)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
 include_directories(logic/ai-engine)
 include_directories(logic/game-engine)
 include_directories(logic/model)
 
 add_executable(BattleshipOpenGL
-        .idea/BattleshipOpenGL.iml
-        .idea/misc.xml
-        .idea/modules.xml
-        .idea/workspace.xml
         logic/ai-engine/AiEngine.cpp
         logic/ai-engine/AiEngine.h
         logic/game-engine/GameEngine.cpp
@@ -28,6 +27,8 @@ add_executable(BattleshipOpenGL
         logic/model/Point.h
         logic/model/Ship.cpp
         logic/model/Ship.h
-        CMakeLists.txt
         main.cpp
         )
+
+
+TARGET_LINK_LIBRARIES(BattleshipOpenGL ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})

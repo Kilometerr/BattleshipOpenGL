@@ -1,0 +1,9 @@
+ADD TO cmake-build-debug folder:
+SDL2.dll
+SDL2_image.dll
+zlib1.dll
+libpng16-16.dll
+
+CMakeLists.txt CHANGE:
+SDL2_PATH
+SDL2_DIR
