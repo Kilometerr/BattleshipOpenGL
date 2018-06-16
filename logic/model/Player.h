@@ -20,12 +20,33 @@ public:
     void setLife(int life);
     int getId() const;
 
+    void setdecpoints();
+    void zerodecpoints();
+    int getTempX();
+    int getTempY();
+    void setTempXY(int x, int y);
+    void decreasedecpoints();
+    int getdecpoints();
+    void increasedecpoints();
+    int getHitCounter();
+    void increaseHitCounter();
+    void zeroHitCounter();
+    void increaseMissCounter();
+    int getMissCounter();
+    void zeroMissCounter();
+
 private:
     int **myMap;
     int **enemyMap;
     Ship *ships;
     int id;
     int life;
+
+    int missCounter;
+    int hitCounter;
+    int tempX;
+    int tempY;
+    int aidecisionPoints;
 };
 
 

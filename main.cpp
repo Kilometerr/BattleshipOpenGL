@@ -37,6 +37,8 @@ SDL_Texture* button_2_Texture;
 SDL_Rect sprst[4];
 SDL_Rect dprst[4];
 
+void aiHelper(Game *pGame, int state, Point point);
+
 /**
  * Inicjalizacja okna
  * @return
@@ -485,6 +487,10 @@ int main( int argc, char* args[] ) {
                 //Stan akcji ruchu
                 int state = gameEngine->action(&move, game);
 
+                if (playerNr == 2 || !gameWithHuman) {
+                    aiHelper(game, state, move);
+                }
+
                 showConsoleMove(move, playerNr);
                 showConsoleState(state);
 
@@ -507,6 +513,34 @@ int main( int argc, char* args[] ) {
         }
     }
 
+    SDL_Delay( 5000 );
     close();
     return 0;
+}
+
+/**
+ * Pomocnik AI - zbieranie danych do wykonania ruchu
+ * @param pGame
+ * @param state
+ */
+void aiHelper(Game *pGame, int state, Point point) {
+    switch (state) {
+        case ROUND_STATE_MISS:
+            if (pGame->getNextPlayer()->getHitCounter() >= 2){
+                pGame->getNextPlayer()->increaseMissCounter();
+            }
+            break;
+        case ROUND_STATE_HIT:
+            pGame->getNextPlayer()->increaseHitCounter();
+            if((pGame->getNextPlayer()->getdecpoints() == 0) && ( pGame->getNextPlayer()->getHitCounter() == 1)){
+                pGame->getNextPlayer()->setdecpoints();
+            }
+            pGame->getNextPlayer()->setTempXY(point.getX(),point.getY());
+            break;
+        case ROUND_STATE_HIT_AND_DROWNED:
+            pGame->getNextPlayer()->zerodecpoints();
+            pGame->getNextPlayer()->zeroHitCounter();
+            pGame->getNextPlayer()->zeroMissCounter();
+            break;
+    }
 }

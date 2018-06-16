@@ -6,6 +6,9 @@
 
 Player::Player(int _id) {
     life = 14;
+    missCounter = 0;
+    aidecisionPoints = 0;
+    hitCounter = 0;
     id = _id;
     myMap = new int *[10];
     enemyMap = new int *[10];
@@ -68,4 +71,54 @@ int Player::getLife() const {
 
 void Player::setLife(int life) {
     Player::life = life;
+}
+
+void Player::setdecpoints() {
+    Player::aidecisionPoints = 4;
+
+}
+void Player::setTempXY(int x, int y){
+    Player::tempX = x;
+    Player::tempY = y;
+}
+
+int Player::getTempX() {
+    return tempX;
+}
+
+int Player::getTempY() {
+    return tempY;
+}
+
+void Player::zerodecpoints() {
+    Player::aidecisionPoints = 0;
+}
+int Player::getdecpoints() {
+    return aidecisionPoints;
+}
+void Player::decreasedecpoints(){
+    Player::aidecisionPoints--;
+}
+void Player::increasedecpoints(){
+    Player::aidecisionPoints++;
+}
+
+int Player::getHitCounter() {
+    return hitCounter;
+}
+void Player::increaseHitCounter(){
+    hitCounter++;
+}
+void Player::zeroHitCounter(){
+    hitCounter = 0;
+}
+
+int Player::getMissCounter() {
+    return missCounter;
+}
+void Player::increaseMissCounter(){
+    missCounter++;
+}
+void Player::zeroMissCounter(){
+    missCounter = 0;
 }

@@ -19,9 +19,10 @@ public:
     void setShips(Player* player);
 
 private:
-     void setShip(Player* player, int shipNr, int size);
-     int getRandomNumber(unsigned int a, unsigned int b);
-     std::default_random_engine generator;
+    void setShip(Player* player, int shipNr, int size);
+    int getRandomNumber(unsigned int a, unsigned int b);
+    bool IsPositionOk(int x, int y, Player *player);
+    std::default_random_engine generator;
 };
 
 #endif //UNTITLED7_AIENGINE_H
