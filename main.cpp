@@ -680,7 +680,9 @@ int main( int argc, char* args[] ) {
                 //Ustawianie wygranego
                 if (!quit) {
                     quit = setWinner(game);
-                    showEndScreen(game->getWinner()->getId());
+                    if (quit) {
+                        showEndScreen(game->getWinner()->getId());
+                    }
                 }
 
                 //Opoznienie 500ms
