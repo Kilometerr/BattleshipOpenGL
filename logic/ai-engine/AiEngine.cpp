@@ -18,7 +18,7 @@ void AiEngine::setShips(Player *player) {
     setShip(player, 4, 2);
 }
 
-Point AiEngine::getPoint(Player *player) {
+Point* AiEngine::getPoint(Player *player) {
     bool pointIsInValid = true;
     auto *point = new Point();
     int x = 0, y = 0;
@@ -76,7 +76,7 @@ Point AiEngine::getPoint(Player *player) {
                 if (IsPositionOk(player->getTempX(), player->getTempY() + 1 + missComp, player)){
                     point->setX(player->getTempX());
                     point->setY(player->getTempY() + 1 + missComp);
-                    return *point;
+                    return point;
                 }
                 break;
 
@@ -84,7 +84,7 @@ Point AiEngine::getPoint(Player *player) {
                 if (IsPositionOk(player->getTempX() + 1 + missComp, player->getTempY(),player)){
                     point->setX(player->getTempX()+ 1 + missComp);
                     point->setY(player->getTempY());
-                    return *point;
+                    return point;
                 }
                 break;
 
@@ -92,7 +92,7 @@ Point AiEngine::getPoint(Player *player) {
                 if (IsPositionOk(player->getTempX(), player->getTempY()-1 - missComp, player)){
                     point->setX(player->getTempX());
                     point->setY(player->getTempY() -1 - missComp);
-                    return *point;
+                    return point;
                 }
                 break;
 
@@ -100,7 +100,7 @@ Point AiEngine::getPoint(Player *player) {
                 if (IsPositionOk(player->getTempX()- 1 - missComp, player->getTempY(), player)){
                     point->setX(player->getTempX()- 1 - missComp);
                     point->setY(player->getTempY());
-                    return *point;
+                    return point;
                 }
                 break;
         }
@@ -118,8 +118,7 @@ Point AiEngine::getPoint(Player *player) {
                     point->setX(player->getTempX());
                     point->setY(player->getTempY() + 1);
                     player->increasedecpoints();
-                    return *point;
-                    break;
+                    return point;
                 }
             }
 
@@ -130,8 +129,7 @@ Point AiEngine::getPoint(Player *player) {
                     point->setX(player->getTempX()+1);
                     point->setY(player->getTempY());
                     player->increasedecpoints();
-                    return *point;
-                    break;
+                    return point;
                 }
             }
 
@@ -142,8 +140,7 @@ Point AiEngine::getPoint(Player *player) {
                     point->setX(player->getTempX());
                     point->setY(player->getTempY() -1);
                     player->increasedecpoints();
-                    return *point;
-                    break;
+                    return point;
                 }
             }
 
@@ -154,8 +151,7 @@ Point AiEngine::getPoint(Player *player) {
                     point->setX(player->getTempX()-1);
                     point->setY(player->getTempY());
                     player->increasedecpoints();
-                    return *point;
-                    break;
+                    return point;
                 }else{
                     break;
                 }
@@ -174,7 +170,7 @@ Point AiEngine::getPoint(Player *player) {
             pointIsInValid = false;
         }
     }
-    return *point;
+    return point;
 }
 
 void AiEngine::setShip(Player *player, int shipNr, int size) {
