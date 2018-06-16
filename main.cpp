@@ -29,13 +29,20 @@ SDL_Surface* menu;
 SDL_Surface* button0;
 SDL_Surface* button1;
 SDL_Surface* button2;
+SDL_Surface* button3;
+SDL_Surface* endScreen1;
+SDL_Surface* endScreen2;
+
+
 SDL_Texture* menuTexture;
 SDL_Texture* button_0_Texture;
 SDL_Texture* button_1_Texture;
 SDL_Texture* button_2_Texture;
+SDL_Texture* button_3_Texture;
+SDL_Texture* endScreen1_Texture;
+SDL_Texture* endScreen2_Texture;
 
-SDL_Rect sprst[4];
-SDL_Rect dprst[4];
+SDL_Rect dprst[7];
 
 void aiHelper(Game *pGame, int state, Point point);
 
@@ -92,6 +99,9 @@ bool loadMedia() {
     button0 = SDL_LoadBMP( "button0.bmp" );
     button1 = SDL_LoadBMP( "button1.bmp" );
     button2 = SDL_LoadBMP( "button2.bmp" );
+    button3 = SDL_LoadBMP( "button3.bmp" );
+    endScreen1 = SDL_LoadBMP( "endScreen1.bmp" );
+    endScreen2 = SDL_LoadBMP( "endScreen2.bmp" );
     return success;
 }
 
@@ -127,6 +137,13 @@ void showMesh(int x, int y) {
 }
 
 /**
+ * Aktualizacja ekranu
+ */
+void updateView() {
+    SDL_RenderPresent( gRenderer );
+}
+
+/**
  * Rysowanie mapy
  * @param x
  * @param y
@@ -153,13 +170,7 @@ void showMap(int x, int y, int** map) {
         }
     }
     showMesh(x,y);
-}
-
-/**
- * Aktualizacja ekranu
- */
-void updateView() {
-    SDL_RenderPresent( gRenderer );
+    updateView();
 }
 
 /**
@@ -176,26 +187,6 @@ void clearView() {
 void initMenuTextures() {
     //Definicja pozycji przyciskow
 
-    sprst[0].x = 0;
-    sprst[0].y = 0;
-    sprst[0].w = BUTTON_WIDTH;
-    sprst[0].h = BUTTON_HEIGHT;
-
-    sprst[1].x = 0;
-    sprst[1].y = 0;
-    sprst[1].w = BUTTON_WIDTH;
-    sprst[1].h = BUTTON_HEIGHT;
-
-    sprst[2].x = 0;
-    sprst[2].y = 0;
-    sprst[2].w = BUTTON_WIDTH;
-    sprst[2].h = BUTTON_HEIGHT;
-
-    sprst[3].x = 0;
-    sprst[3].y = 0;
-    sprst[3].w = BUTTON_WIDTH;
-    sprst[3].h = BUTTON_HEIGHT;
-
     dprst[0].x = SCREEN_WIDTH / 2 - BUTTON_WIDTH/2;
     dprst[0].y = 200;
     dprst[0].w = BUTTON_WIDTH;
@@ -206,21 +197,41 @@ void initMenuTextures() {
     dprst[2].w = BUTTON_WIDTH;
     dprst[2].h = BUTTON_HEIGHT;
 
+    dprst[4].x = SCREEN_WIDTH / 2 - BUTTON_WIDTH/2;
+    dprst[4].y = 200 + 2 * BUTTON_HEIGHT + 20;
+    dprst[4].w = BUTTON_WIDTH;
+    dprst[4].h = BUTTON_HEIGHT;
+
     dprst[3].x = SCREEN_WIDTH / 2 - BUTTON_WIDTH/2;
-    dprst[3].y = 200 + 2 * BUTTON_HEIGHT + 20;
+    dprst[3].y = 200 + 3 * BUTTON_HEIGHT + 30;
     dprst[3].w = BUTTON_WIDTH;
     dprst[3].h = BUTTON_HEIGHT;
 
     dprst[1].x = SCREEN_WIDTH / 2 - BUTTON_WIDTH/2;
-    dprst[1].y = 200 + 3 * BUTTON_HEIGHT + 30;
+    dprst[1].y = 200 + 4 * BUTTON_HEIGHT + 40;
     dprst[1].w = BUTTON_WIDTH;
     dprst[1].h = BUTTON_HEIGHT;
+
+    dprst[5].x = 0;
+    dprst[5].y = 0;
+    dprst[5].w = SCREEN_WIDTH;
+    dprst[5].h = SCREEN_HEIGHT;
+
+    dprst[6].x = 0;
+    dprst[6].y = 0;
+    dprst[6].w = SCREEN_WIDTH;
+    dprst[6].h = SCREEN_HEIGHT;
 
     //Tworzenie textur do wyswietlania
     menuTexture = SDL_CreateTextureFromSurface(gRenderer, menu);
     button_0_Texture = SDL_CreateTextureFromSurface(gRenderer, button0);
     button_1_Texture = SDL_CreateTextureFromSurface(gRenderer, button1);
     button_2_Texture = SDL_CreateTextureFromSurface(gRenderer, button2);
+    button_3_Texture = SDL_CreateTextureFromSurface(gRenderer, button3);
+
+    //Dodatkowe wyczytywanie tekstur konca gry
+    endScreen1_Texture = SDL_CreateTextureFromSurface(gRenderer, endScreen1);
+    endScreen2_Texture = SDL_CreateTextureFromSurface(gRenderer, endScreen2);
 }
 
 /**
@@ -234,19 +245,36 @@ void showMenu() {
     SDL_RenderCopy(gRenderer, button_0_Texture, NULL, &dprst[1]);
     SDL_RenderCopy(gRenderer, button_1_Texture, NULL, &dprst[2]);
     SDL_RenderCopy(gRenderer, button_2_Texture, NULL, &dprst[3]);
+    SDL_RenderCopy(gRenderer, button_3_Texture, NULL, &dprst[4]);
+}
+
+/**
+ * Pokazuje ekran koncowy gry
+ * @param winnerPlayerNr
+ */
+void showEndScreen(int winnerPlayerNr) {
+    clearView();
+    if (winnerPlayerNr == 1) {
+        SDL_RenderCopy(gRenderer, endScreen1_Texture, NULL, &dprst[5]);
+    } else {
+        SDL_RenderCopy(gRenderer, endScreen2_Texture, NULL, &dprst[6]);
+    }
+    updateView();
 }
 
 /**
  * Menu gry
  * 0 -  wyjscie
  * 1 -  gra czlowiek vs komputer
- * 2 -  gra kompuer vs komputer
+ * 2 -  gra czlowiek vs komputer (z automatycznym ustawianiem mapy)
+ * 3 -  gra kompuer vs komputer
  * @return wybor z menu
  */
 int menuAction() {
     const int QUIT = -1;
     const int NEW_GAME = 1;
-    const int NEW_AUTO_GAME = 2;
+    const int NEW_GAME_AUTO_MAP = 2;
+    const int NEW_AUTO_GAME = 3;
     SDL_Event e;
     initMenuTextures();
     int x,y;
@@ -261,9 +289,6 @@ int menuAction() {
 
         //Aktalizacja widoku
         updateView();
-
-        //Opoznienie
-        SDL_Delay(500);
 
         while (SDL_PollEvent(&e) != 0) {
 
@@ -281,6 +306,8 @@ int menuAction() {
                     case SDLK_1:
                         return NEW_GAME;
                     case SDLK_2:
+                        return NEW_GAME_AUTO_MAP;
+                    case SDLK_3:
                         return NEW_AUTO_GAME;
                     case SDLK_0:
                         return QUIT;
@@ -298,7 +325,7 @@ int menuAction() {
             if( e.type == SDL_MOUSEBUTTONDOWN ) {
                 if( e.button.button == SDL_BUTTON_LEFT) {
                     //Sprawdzamy kazdy z przycikow
-                    for (int i = 1 ; i < 4; i++) {
+                    for (int i = 1 ; i < 5; i++) {
                         if ((x >= dprst[i].x && x <= dprst[i].x + BUTTON_WIDTH)
                             &&( y >= dprst[i].y && y <= dprst[i].y + BUTTON_HEIGHT ) ){
                             //Akcja na przycisk
@@ -309,6 +336,8 @@ int menuAction() {
                                     return NEW_GAME;
                                 case 3:
                                     return NEW_AUTO_GAME;
+                                case 4:
+                                    return NEW_GAME_AUTO_MAP;
                                 default:
                                     break;
                             }
@@ -325,8 +354,110 @@ int menuAction() {
  * Ustaiwanie statkow przez gracza
  * @param pPlayer
  */
-void setHumanShipsAction(Player *pPlayer) {
-    //TODO
+bool setHumanShipsAction(Player *pPlayer) {
+    SDL_Event e;
+    int x = -1, y = -1;
+    int lastX = -1, lastY = -1;
+
+    /**
+     * -2 - pierwszy punkt
+     * -1 - brak wyboru
+     * 0 - horyzontalnie
+     * 1 - wertykalnie
+     */
+    int state = -2;
+    int shipTab[5] = {4,3,3,2,2};
+    int shipNr = 0;
+    int pointNr = 0;
+
+    int **map = pPlayer->getMyMap();
+    Ship *ship;
+    Point* points;
+
+    while (true) {
+        while (SDL_PollEvent(&e) != 0) {
+
+            if (state == -2) {
+                ship = &pPlayer->getShips()[shipNr];
+                ship->setSize(shipTab[shipNr]);
+                points = new Point[shipTab[shipNr]];
+                ship->setPositions(points);
+                ship->setLife(shipTab[shipNr]);
+            }
+
+            //Wyjscie z aplikacji
+            if (e.type == SDL_QUIT) {
+                return false;
+            }
+
+            //akcja na myszke
+            //ruch myszy
+            if( e.type == SDL_MOUSEMOTION ) {
+                x = e.motion.x;
+                y = e.motion.y;
+            }
+
+            //klikniecie myszy
+            if( e.type == SDL_MOUSEBUTTONDOWN ) {
+                if( e.button.button == SDL_BUTTON_LEFT) {
+                    if (x > 0 && x < 400 && y > 0 && y < 400) {
+                        x /= 40;
+                        y /= 40;
+                        if (map[x][y] != 0) {
+                            //sprawdzamy czy gracz nie zaznaczal
+                            //danego pola
+                            break;
+                        }
+
+                        if (state == -1 && !(
+                                    (x == (lastX + 1) && y == lastY) ||
+                                    (x == (lastX - 1) && y == lastY) ||
+                                    (x == lastX && y == (lastY + 1)) ||
+                                    (x == lastX && y == (lastY - 1))
+                                )) {
+                            break;
+                        } else if (state == 0 && lastX != x){
+                            break;
+                        } else if (state == 1 && lastY != y) {
+                            break;
+                        }
+
+                        if (state == -2) { //pierwszy strzal
+                            state = -1;
+                        } else if (state == -1) {
+                            if (lastX == x) { //horyznotalnie
+                                state = 0;
+                            } else { //wertykalnie
+                                state = 1;
+                            }
+                        }
+
+                        points[pointNr].setX(x);
+                        points[pointNr].setY(y);
+                        map[x][y] = 1;
+                        shipTab[shipNr] -= 1;
+                        lastX = x;
+                        lastY = y;
+                        ++pointNr;
+
+                        showMap(0,0,map);
+
+                        //zerujemy dane dla kolejnego statku
+                        if (shipTab[shipNr] == 0) {
+                            state = -2;
+                            ++shipNr;
+                            pointNr = 0;
+                            lastX = -1;
+                            lastY = -1;
+                            if (shipNr == 5) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -334,9 +465,45 @@ void setHumanShipsAction(Player *pPlayer) {
  * @param pPlayer
  * @return
  */
-Point getHumanPointAction(Player *pPlayer) {
-    //TODO
-    return Point();
+Point *getHumanPointAction(Player *pPlayer) {
+    SDL_Event e;
+    int x = -1, y = -1;
+
+    while (true) {
+        while (SDL_PollEvent(&e) != 0) {
+
+            //Wyjscie z aplikacji
+            if (e.type == SDL_QUIT) {
+                return NULL;
+            }
+
+            //akcja na myszke
+            //ruch myszy
+            if( e.type == SDL_MOUSEMOTION ) {
+                x = e.motion.x;
+                y = e.motion.y;
+            }
+
+            //klikniecie myszy
+            if( e.type == SDL_MOUSEBUTTONDOWN ) {
+                if( e.button.button == SDL_BUTTON_LEFT) {
+                    x -= 600;
+                    if (x > 0 && x < 400 && y > 0 && y < 400) {
+                        x /= 40;
+                        y /= 40;
+                        if (pPlayer->getEnemyMap()[x][y] != 0) {
+                            //sprawdzamy czy gracz nie zaznaczal
+                            //danego pola
+                            continue;
+                        }
+                        Point *point;
+                        point = new Point(x, y);
+                        return point;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -423,7 +590,7 @@ int main( int argc, char* args[] ) {
             int selection =  menuAction();
             if (selection == -1) { // wyjscie z gry
                 return 0;
-            } else if (selection == 1) { //gra z czlowiekiem
+            } else if (selection == 1 || selection == 2) { //gra z czlowiekiem
                 gameWithHuman = true;
             } // w innym przypadku gra automatyczna
 
@@ -437,12 +604,23 @@ int main( int argc, char* args[] ) {
 
             //Ustaiwanie statkow
             if (gameWithHuman) {
-                setHumanShipsAction(player1);
-                aiEngine->setShips(player2);
+                if (selection == 1) { // dla manualnego ustawiania statkow
+                    clearView();
+                    showMap(0, 0, player1->getMyMap());
+                    showMap(600, 0, player1->getEnemyMap());
+
+                    bool setIsDone = setHumanShipsAction(player1);
+                    if (!setIsDone) { //gracz wychodzi z gry
+                        close();
+                        return 0;
+                    }
+                } else {
+                    aiEngine->setShips(player1);
+                }
             } else {
                 aiEngine->setShips(player1);
-                aiEngine->setShips(player2);
             }
+            aiEngine->setShips(player2);
 
             //Ustawianie gry
             Game *game = new Game();
@@ -471,27 +649,27 @@ int main( int argc, char* args[] ) {
                 //Wyswietlanie mapy gracza ludziego
                 if (gameWithHuman) {
                     showMap(0,0,player1->getMyMap());
-                    showMap(600,0,player2->getEnemyMap());
+                    showMap(600,0,player1->getEnemyMap());
                 } else { //Wyswietlanie mapy gracza komputerowego
                     showMap(0,0,game->getActual()->getMyMap());
                     showMap(600,0,game->getActual()->getEnemyMap());
                 }
                 //Wykonywane ruchu
-                Point move;
+                Point* move;
                 if (gameWithHuman && playerNr == 1) { //gracz czlowiek
-                    move = getHumanPointAction(game->getActual());
+                    move = getHumanPointAction(player1);
                 } else {
                     move = aiEngine->getPoint(game->getActual());
                 }
 
                 //Stan akcji ruchu
-                int state = gameEngine->action(&move, game);
+                int state = gameEngine->action(move, game);
 
                 if (playerNr == 2 || !gameWithHuman) {
-                    aiHelper(game, state, move);
+                    aiHelper(game, state, *move);
                 }
 
-                showConsoleMove(move, playerNr);
+                showConsoleMove(*move, playerNr);
                 showConsoleState(state);
 
                 //Wystapil blad - zakoncz petle gry
@@ -502,13 +680,13 @@ int main( int argc, char* args[] ) {
                 //Ustawianie wygranego
                 if (!quit) {
                     quit = setWinner(game);
+                    showEndScreen(game->getWinner()->getId());
                 }
 
-                //Aktalizacja widoku
-                updateView();
-
                 //Opoznienie 500ms
-                SDL_Delay( 500 );
+                if (!gameWithHuman) {
+                    SDL_Delay(500);
+                }
             }
         }
     }

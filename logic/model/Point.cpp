@@ -19,3 +19,7 @@ int Point::getY() const {
 void Point::setY(int y) {
     Point::y = y;
 }
+
+Point::Point() {}
+
+Point::Point(int x, int y) : x(x), y(y) {}

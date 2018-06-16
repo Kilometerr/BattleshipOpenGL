@@ -15,7 +15,7 @@ class AiEngine {
 
 public:
     AiEngine();
-    Point getPoint(Player* player);
+    Point* getPoint(Player* player);
     void setShips(Player* player);
 
 private:

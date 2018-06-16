@@ -17,6 +17,10 @@ public:
     int getY() const;
 
     void setY(int y);
+
+    Point();
+
+    Point(int x, int y);
 };
 
 
