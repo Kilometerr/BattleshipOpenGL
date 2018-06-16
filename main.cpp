@@ -127,6 +127,13 @@ void showMesh(int x, int y) {
 }
 
 /**
+ * Aktualizacja ekranu
+ */
+void updateView() {
+    SDL_RenderPresent( gRenderer );
+}
+
+/**
  * Rysowanie mapy
  * @param x
  * @param y
@@ -153,13 +160,7 @@ void showMap(int x, int y, int** map) {
         }
     }
     showMesh(x,y);
-}
-
-/**
- * Aktualizacja ekranu
- */
-void updateView() {
-    SDL_RenderPresent( gRenderer );
+    updateView();
 }
 
 /**
@@ -262,9 +263,6 @@ int menuAction() {
         //Aktalizacja widoku
         updateView();
 
-        //Opoznienie
-        SDL_Delay(500);
-
         while (SDL_PollEvent(&e) != 0) {
 
             //Wyjscie z aplikacji
@@ -334,9 +332,45 @@ void setHumanShipsAction(Player *pPlayer) {
  * @param pPlayer
  * @return
  */
-Point getHumanPointAction(Player *pPlayer) {
-    //TODO
-    return Point();
+Point *getHumanPointAction(Player *pPlayer) {
+    SDL_Event e;
+    int x = -1, y = -1;
+
+    while (true) {
+        while (SDL_PollEvent(&e) != 0) {
+
+            //Wyjscie z aplikacji
+            if (e.type == SDL_QUIT) {
+                return NULL;
+            }
+
+            //akcja na myszke
+            //ruch myszy
+            if( e.type == SDL_MOUSEMOTION ) {
+                x = e.motion.x;
+                y = e.motion.y;
+            }
+
+            //klikniecie myszy
+            if( e.type == SDL_MOUSEBUTTONDOWN ) {
+                if( e.button.button == SDL_BUTTON_LEFT) {
+                    x -= 600;
+                    if (x > 0 && x < 400 && y > 0 && y < 400) {
+                        x /= 40;
+                        y /= 40;
+                        if (pPlayer->getEnemyMap()[x][y] != 0) {
+                            //sprawdzamy czy gracz nie zaznaczal
+                            //danego pola
+                            continue;
+                        }
+                        Point *point;
+                        point = new Point(x, y);
+                        return point;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -437,12 +471,12 @@ int main( int argc, char* args[] ) {
 
             //Ustaiwanie statkow
             if (gameWithHuman) {
-                setHumanShipsAction(player1);
-                aiEngine->setShips(player2);
+                //setHumanShipsAction(player1);
+                aiEngine->setShips(player1);
             } else {
                 aiEngine->setShips(player1);
-                aiEngine->setShips(player2);
             }
+            aiEngine->setShips(player2);
 
             //Ustawianie gry
             Game *game = new Game();
@@ -471,27 +505,27 @@ int main( int argc, char* args[] ) {
                 //Wyswietlanie mapy gracza ludziego
                 if (gameWithHuman) {
                     showMap(0,0,player1->getMyMap());
-                    showMap(600,0,player2->getEnemyMap());
+                    showMap(600,0,player1->getEnemyMap());
                 } else { //Wyswietlanie mapy gracza komputerowego
                     showMap(0,0,game->getActual()->getMyMap());
                     showMap(600,0,game->getActual()->getEnemyMap());
                 }
                 //Wykonywane ruchu
-                Point move;
+                Point* move;
                 if (gameWithHuman && playerNr == 1) { //gracz czlowiek
-                    move = getHumanPointAction(game->getActual());
+                    move = getHumanPointAction(player1);
                 } else {
                     move = aiEngine->getPoint(game->getActual());
                 }
 
                 //Stan akcji ruchu
-                int state = gameEngine->action(&move, game);
+                int state = gameEngine->action(move, game);
 
                 if (playerNr == 2 || !gameWithHuman) {
-                    aiHelper(game, state, move);
+                    aiHelper(game, state, *move);
                 }
 
-                showConsoleMove(move, playerNr);
+                showConsoleMove(*move, playerNr);
                 showConsoleState(state);
 
                 //Wystapil blad - zakoncz petle gry
@@ -504,11 +538,10 @@ int main( int argc, char* args[] ) {
                     quit = setWinner(game);
                 }
 
-                //Aktalizacja widoku
-                updateView();
-
                 //Opoznienie 500ms
-                SDL_Delay( 500 );
+                if (!gameWithHuman) {
+                    SDL_Delay(500);
+                }
             }
         }
     }
