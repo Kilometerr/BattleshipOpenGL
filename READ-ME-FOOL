@@ -1,9 +1,15 @@
 ADD TO cmake-build-debug folder:
-SDL2.dll
-SDL2_image.dll
 zlib1.dll
+SDL2_ttf.dll
+SDL2_image.dll
+SDL2.dll
+menu.bmp
 libpng16-16.dll
-
-CMakeLists.txt CHANGE:
-SDL2_PATH
-SDL2_DIR
+libfreetype-6.dll
+endScreen2.bmp
+endScreen1.bmp
+button3.bmp
+button2.bmp
+button1.bmp
+button0.bmp
+Alef-Regular.ttf
