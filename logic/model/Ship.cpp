@@ -9,7 +9,7 @@ void Ship::setSize(int size) {
     Ship::size = size;
 }
 
-int Ship::getSize() const {
+int Ship::getSize() {
     return size;
 }
 
@@ -17,7 +17,7 @@ Ship::~Ship() {
     delete [] positions;
 }
 
-Point* Ship::getPositions() const {
+Point* Ship::getPositions() {
     return positions;
 }
 
@@ -30,7 +30,7 @@ void Ship::setPositions(Point *positions) {
     Ship::positions = positions;
 }
 
-int Ship::getLife() const {
+int Ship::getLife() {
     return life;
 }
 

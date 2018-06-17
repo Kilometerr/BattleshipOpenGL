@@ -24,90 +24,6 @@ Point* AiEngine::getPoint(Player *player) {
     int x = 0, y = 0;
     int** map = player->getEnemyMap();
 
-    /*  if (player->getMissCounter() == 3 ){
-          player->decreasedecpoints()
-      }*/
-
-    if (player->getHitCounter() >= 2) {
-
-
-        int missComp = 0;
-        int decPoints = player->getdecpoints();
-        if (player->getMissCounter() >= 4){
-            player->zeroMissCounter();
-            player->zerodecpoints();
-            player->zeroHitCounter();
-            decPoints = 5;
-        }
-
-        if (player->getMissCounter() == 1){
-            switch (decPoints)
-            {
-                case(4):
-                    missComp = player->getHitCounter() -1 ;
-                    decPoints = decPoints - 2;
-                    player->increaseMissCounter(); // podwyższamy ilosc by gra nie weszła w to samo razy po trafieniu
-                    break;
-
-                case(3):
-                    missComp = player->getHitCounter() -1 ;
-                    decPoints = decPoints - 2;
-                    player->increaseMissCounter();
-                    break;
-
-                case(2):
-                    missComp = player->getHitCounter() - 1;
-                    decPoints = decPoints + 2;
-                    player->increaseMissCounter();
-                    break;
-
-                case(1):
-                    missComp = player->getHitCounter() -1 ;
-                    decPoints = decPoints + 2;
-                    player->increaseMissCounter();
-                    break;
-            }
-        }
-        switch (decPoints){
-            case (5):
-                break;
-
-            case(4):
-                if (IsPositionOk(player->getTempX(), player->getTempY() + 1 + missComp, player)){
-                    point->setX(player->getTempX());
-                    point->setY(player->getTempY() + 1 + missComp);
-                    return point;
-                }
-                break;
-
-            case (3):
-                if (IsPositionOk(player->getTempX() + 1 + missComp, player->getTempY(),player)){
-                    point->setX(player->getTempX()+ 1 + missComp);
-                    point->setY(player->getTempY());
-                    return point;
-                }
-                break;
-
-            case (2):
-                if (IsPositionOk(player->getTempX(), player->getTempY()-1 - missComp, player)){
-                    point->setX(player->getTempX());
-                    point->setY(player->getTempY() -1 - missComp);
-                    return point;
-                }
-                break;
-
-            case (1):
-                if (IsPositionOk(player->getTempX()- 1 - missComp, player->getTempY(), player)){
-                    point->setX(player->getTempX()- 1 - missComp);
-                    point->setY(player->getTempY());
-                    return point;
-                }
-                break;
-        }
-
-    }
-
-
     if ((player->getdecpoints() > 0)  && (player->getHitCounter() == 1 ) ){
         int decPoints = player->getdecpoints();
         switch (decPoints){
@@ -154,6 +70,119 @@ Point* AiEngine::getPoint(Player *player) {
                     return point;
                 }else{
                     break;
+                }
+            }
+        }
+
+    }
+
+    if (player->getMissCounter() == 3 || player->getMissCounter() == 5 ){
+        switch(player->getdecpoints())
+        {
+            case (3):
+                player->increasedecpoints();
+                player->increaseMissCounter();
+                break;
+            case (2) :
+                player->increasedecpoints();
+                player->increaseMissCounter();
+                break;
+            case (1):
+                player->increasedecpoints();
+                player->increaseMissCounter();
+                break;
+
+        }
+    }
+
+    if (player->getHitCounter() >= 2) {
+
+
+        int missComp = 0;
+        int decPoints = 0;
+        decPoints = player->getdecpoints();
+        if (player->getMissCounter() >= 6) {
+            player->zeroMissCounter();
+            player->zerodecpoints();
+            player->zeroHitCounter();
+            decPoints = 5;
+        }
+
+        if (player->getMissCounter() == 1){
+            switch (decPoints)
+            {
+                case(4):
+                    missComp = player->getHitCounter() - 1 ;
+                    decPoints = decPoints - 2;
+                    player->increaseMissCounter(); // podwyższamy ilosc by gra nie weszła w to samo razy po trafieniu
+                    break;
+
+                case(3):
+                    missComp = player->getHitCounter() - 1 ;
+                    decPoints = decPoints - 2;
+                    player->increaseMissCounter();
+                    break;
+
+                case(2):
+                    missComp = player->getHitCounter() - 1;
+                    decPoints = decPoints + 2;
+                    player->increaseMissCounter();
+                    break;
+
+                case(1):
+                    missComp = player->getHitCounter() -1 ;
+                    decPoints = decPoints + 2;
+                    player->increaseMissCounter();
+                    break;
+            }
+        }
+        switch (decPoints){
+            case (5):
+                break;
+
+            case(4):
+                if (IsPositionOk(player->getTempX(), player->getTempY() + 1 + missComp, player)) {
+                    point->setX(player->getTempX());
+                    point->setY(player->getTempY() + 1 + missComp);
+                    return point;
+                }
+
+            case (3):
+                if (IsPositionOk(player->getTempX() + 1 + missComp, player->getTempY(),player)){
+                    point->setX(player->getTempX()+ 1 + missComp);
+                    point->setY(player->getTempY());
+                    return point;
+                }
+
+
+            case (2):
+                if (IsPositionOk(player->getTempX(), player->getTempY()-1 - missComp, player)){
+                    point->setX(player->getTempX());
+                    point->setY(player->getTempY() -1 - missComp);
+                    return point;
+                }
+
+            case (1):
+                if (IsPositionOk(player->getTempX()- 1 - missComp, player->getTempY(), player)){
+                    point->setX(player->getTempX() - 1 - missComp);
+                    point->setY(player->getTempY());
+                    return point;
+                }
+            case (0):
+            {
+                switch (decPoints) {
+                    case (4):
+                        if (IsPositionOk(player->getTempX(), player->getTempY() - 2, player)) {
+                            point->setX(player->getTempX());
+                            point->setY(player->getTempY() - 2 - missComp);
+                            return point;
+                        }
+                    case (3):
+                        if (IsPositionOk(player->getTempX() - 2, player->getTempY(), player)) {
+                            point->setX(player->getTempX() - 2);
+                            point->setY(player->getTempY());
+                            return point;
+                        }
                 }
             }
         }

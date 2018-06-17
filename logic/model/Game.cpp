@@ -4,7 +4,7 @@
 
 #include "Game.h"
 
-Player *Game::getWinner() const {
+Player *Game::getWinner() {
     return winner;
 }
 
@@ -12,7 +12,7 @@ void Game::setWinner(Player *winner) {
     Game::winner = winner;
 }
 
-Player *Game::getActual() const {
+Player *Game::getActual() {
     return actual;
 }
 
@@ -20,7 +20,7 @@ void Game::setActual(Player *actual) {
     Game::actual = actual;
 }
 
-Player *Game::getNextPlayer() const {
+Player *Game::getNextPlayer() {
     return nextPlayer;
 }
 

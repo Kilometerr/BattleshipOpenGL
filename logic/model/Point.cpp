@@ -4,7 +4,7 @@
 
 #include "Point.h"
 
-int Point::getX() const {
+int Point::getX() {
     return x;
 }
 
@@ -12,7 +12,7 @@ void Point::setX(int x) {
     Point::x = x;
 }
 
-int Point::getY() const {
+int Point::getY() {
     return y;
 }
 

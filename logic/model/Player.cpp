@@ -28,15 +28,15 @@ Player::Player(int _id) {
     }
 }
 
-int **Player::getMyMap() const {
+int **Player::getMyMap() {
     return myMap;
 }
 
-int **Player::getEnemyMap() const {
+int **Player::getEnemyMap() {
     return enemyMap;
 }
 
-Ship *Player::getShips() const {
+Ship *Player::getShips() {
     return ships;
 }
 
@@ -61,11 +61,11 @@ void Player::clearMaps() {
     }
 }
 
-int Player::getId() const {
+int Player::getId() {
     return id;
 }
 
-int Player::getLife() const {
+int Player::getLife() {
     return life;
 }
 

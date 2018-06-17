@@ -7,6 +7,7 @@
 #include <cmath>
 #include "logic/game-engine/GameEngine.h"
 #include "logic/ai-engine/AiEngine.h"
+#include <sstream>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,10 +47,13 @@ SDL_Texture* endScreen2_Texture;
 
 SDL_Rect dprst[7];
 SDL_Color textColor = { 0, 0, 0 };
+TTF_Font* font;
 
 void aiHelper(Game *pGame, int state, Point point);
 
 void showAvalibleShips(int x, int y, int len, int nr);
+
+void showtext(int x, int y, std::string text );
 
 /**
  * Inicjalizacja okna
@@ -92,6 +96,7 @@ bool init() {
     if( TTF_Init() == -1 ) {
        return false;
     }
+    font = TTF_OpenFont("Alef-Regular.ttf", 25);
     return success;
 }
 
@@ -125,6 +130,9 @@ void close() {
 
     IMG_Quit();
     SDL_Quit();
+    TTF_CloseFont(font);
+    TTF_Quit();
+
 }
 
 /**
@@ -562,21 +570,27 @@ bool setWinner(Game *pGame) {
  * Wypisywanie do konsoli informacji o stanie wykonanego ruchu
  * @param state
  */
-void showConsoleState(int state) {
+std::string showConsoleState(int state) {
+    std::string str;
     switch (state) {
         case ROUND_STATE_MISS:
-            std::cout << "Status: PUDLO" << std::endl;
+            str = "Status: PUDLO";
+            std::cout << str << std::endl;
             break;
         case ROUND_STATE_HIT:
-            std::cout << "Status: TRAFIONY" << std::endl;
+            str = "Status: TRAFIONY";
+            std::cout << str << std::endl;
             break;
         case ROUND_STATE_HIT_AND_DROWNED:
-            std::cout << "Status: TRAFIONY ZATOPIONY" << std::endl;
+            str =  "Status: TRAFIONY ZATOPIONY";
+            std::cout << str  << std::endl;
             break;
         default:
-            std::cout << "Wystapil blad" << std::endl;
+            str = "Wystapil blad";
+            std::cout << str << std::endl;
             break;
     }
+    return str;
 }
 
 /**
@@ -584,10 +598,14 @@ void showConsoleState(int state) {
  * @param move
  * @param playerNr
  */
-void showConsoleMove(Point move, int playerNr) {
+std::string showConsoleMove(Point move, int playerNr) {
     int x = move.getX();
     int y = move.getY();
-    std::cout << "Gracz " << playerNr << " wykonal strzal na pole: x:" << x << " y:" << y << std::endl;
+    std::ostringstream oss;
+    oss << "Gracz " << playerNr << " wykonal strzal na pole: x:" << x << " y:" << y;
+    std::string str = oss.str();
+    std::cout << str;
+    return str;
 }
 
 /**
@@ -625,7 +643,6 @@ int main(int argc, char **argv) {
 
             //Wybor typu gry
             int selection =  menuAction();
-
             if (selection == -1) { // wyjscie z gry
                 return 0;
             } else if (selection == 1 || selection == 2) { //gra z czlowiekiem
@@ -669,6 +686,11 @@ int main(int argc, char **argv) {
             //Glowna petla gry
             SDL_Event e;
             bool quit = false;
+            std::string line1 = "";
+            std::string line2 = "";
+            std::string line3 = "";
+            std::string line4 = "";
+
             while( !quit ) {
 
                 //Oczekiwanie na event wyscia z ekranu
@@ -683,6 +705,11 @@ int main(int argc, char **argv) {
 
                 //Numer aktalnego gracza
                 int playerNr = game->getActual()->getId();
+
+                showtext(0, 440, line1);
+                showtext(0, 470, line2);
+                showtext(0, 500, line3);
+                showtext(0, 530, line4);
 
                 //Wyswietlanie mapy gracza ludziego
                 if (gameWithHuman) {
@@ -707,8 +734,11 @@ int main(int argc, char **argv) {
                     aiHelper(game, state, *move);
                 }
 
-                showConsoleMove(*move, playerNr);
-                showConsoleState(state);
+                line1 = line3;
+                line2 = line4;
+
+                line3 = showConsoleMove(*move, playerNr);
+                line4 = showConsoleState(state);
 
                 //Wystapil blad - zakoncz petle gry
                 if (state == ROUND_STATE_ERROR) {
@@ -734,6 +764,23 @@ int main(int argc, char **argv) {
     SDL_Delay( 5000 );
     close();
     return 0;
+}
+
+void showtext(int x, int y, std::string text ) {
+
+    const char* dText = text.c_str();
+    SDL_Color color = { 0, 0, 0 };
+    SDL_Surface * TextSurface = TTF_RenderText_Solid(font,dText, color);
+    SDL_Texture * TextTexture = SDL_CreateTextureFromSurface(gRenderer, TextSurface);
+
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(TextTexture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { x, y, texW, texH };
+
+    SDL_RenderCopy(gRenderer, TextTexture, NULL, &dstrect);
+    SDL_RenderPresent(gRenderer);
+
 }
 
 /**

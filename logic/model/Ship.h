@@ -11,9 +11,9 @@ class Ship {
 public:
     Ship();
 
-    Point *getPositions() const;
+    Point *getPositions();
 
-    int getSize() const;
+    int getSize();
 
     void setSize(int size);
 
@@ -26,7 +26,7 @@ private:
     int size;
     int life;
 public:
-    int getLife() const;
+    int getLife();
 
     void setLife(int life);
 };

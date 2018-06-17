@@ -19,7 +19,6 @@ private:
      void setWinner(Game *game);
      int makeMove(Player *actual, Player *enemy, Point *move);
      int changeShipStatus(Ship *pShip, Point *currentPoint);
-     bool isShipDrowned(Ship ship);
 };
 
 

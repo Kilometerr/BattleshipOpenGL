@@ -10,15 +10,15 @@
 
 class Game {
 public:
-    Player *getWinner() const;
+    Player *getWinner();
 
     void setWinner(Player *winner);
 
-    Player *getActual() const;
+    Player *getActual();
 
     void setActual(Player *actual);
 
-    Player *getNextPlayer() const;
+    Player *getNextPlayer();
 
     void setNextPlayer(Player *nextPlayer);
 

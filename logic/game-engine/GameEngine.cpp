@@ -98,17 +98,14 @@ int GameEngine::changeShipStatus(Ship *ships, Point *currentPoint) {
         Point *points = ships[i].getPositions();
         for (int j = 0; j < ships[i].getSize(); j++) {
            if ((points[j].getY() == currentPoint->getY()) && (points[j].getX() == currentPoint->getX())) {
-               std::cout << "dupa";
                // ustawiamy trafienie dla pola statku
                ships[i].setLife(ships[i].getLife() - 1);
                marked = true;
                // jezeli trafiony zatopiony to zwracamy odpowiedni kod
-               if (isShipDrowned(ships[i])) {
+               if (ships[i].getLife() == 0) {
                    return ROUND_STATE_HIT_AND_DROWNED;
                }
                break;
-           } else {
-
            }
         }
         // jezeli juz oznaczylismy statek wychodzimy z petli
@@ -117,15 +114,5 @@ int GameEngine::changeShipStatus(Ship *ships, Point *currentPoint) {
         }
     }
     return ROUND_STATE_HIT;
-}
-
-bool GameEngine::isShipDrowned(Ship ship) {
-    return ship.getLife() == 0;
-    /*bool isDrowned = true;
-    Point *points = ship.getPositions();
-    for (int i = 0; i < ship.getSize(); i++) {
-        isDrowned &= points[i].getState() == SHIP_STATE_DEAD;
-    }
-    return isDrowned;*/
 }
 

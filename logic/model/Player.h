@@ -12,13 +12,13 @@ class Player {
 public:
     virtual ~Player();
     explicit Player(int id);
-    int **getMyMap() const;
-    int **getEnemyMap() const;
+    int **getMyMap();
+    int **getEnemyMap();
     void clearMaps();
-    Ship *getShips() const;
-    int getLife() const;
+    Ship *getShips();
+    int getLife();
     void setLife(int life);
-    int getId() const;
+    int getId();
 
     void setdecpoints();
     void zerodecpoints();

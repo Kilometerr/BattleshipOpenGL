@@ -10,11 +10,11 @@ class Point {
     int x;
     int y;
 public:
-    int getX() const;
+    int getX();
 
     void setX(int x);
 
-    int getY() const;
+    int getY();
 
     void setY(int y);
 
