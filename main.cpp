@@ -1,5 +1,7 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#include "include/SDL2/SDL.h"
+#include "include/SDL2/SDL_image.h"
+#include "include/SDL2/SDL_ttf.h"
+
 #include <stdio.h>
 #include <string>
 #include <cmath>
@@ -32,7 +34,7 @@ SDL_Surface* button2;
 SDL_Surface* button3;
 SDL_Surface* endScreen1;
 SDL_Surface* endScreen2;
-
+SDL_Surface* message = NULL;
 
 SDL_Texture* menuTexture;
 SDL_Texture* button_0_Texture;
@@ -43,8 +45,11 @@ SDL_Texture* endScreen1_Texture;
 SDL_Texture* endScreen2_Texture;
 
 SDL_Rect dprst[7];
+SDL_Color textColor = { 0, 0, 0 };
 
 void aiHelper(Game *pGame, int state, Point point);
+
+void showAvalibleShips(int x, int y, int len, int nr);
 
 /**
  * Inicjalizacja okna
@@ -83,6 +88,9 @@ bool init() {
                 }
             }
         }
+    }
+    if( TTF_Init() == -1 ) {
+       return false;
     }
     return success;
 }
@@ -124,15 +132,15 @@ void close() {
  * @param x poczatkowy x (lewy gory rog)
  * @param y poczatkowy y (lewy gory rog)
  */
-void showMesh(int x, int y) {
+void showMesh(int x, int y, int nX, int nY, int lenX, int lenY) {
     //linia pozioma
     SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 0);
-    for (int  i = 0; i < 11; i++) {
-        SDL_RenderDrawLine( gRenderer, x, y + i * 40, x + MAX_LEN, y + i *40);
+    for (int  i = 0; i < nY; i++) {
+        SDL_RenderDrawLine( gRenderer, x, y + i * 40, x + lenX, y + i *40);
     }
     //linia pionowa
-    for (int  i = 0; i < 11; i++) {
-        SDL_RenderDrawLine( gRenderer, x + i * 40, y, x + i * 40, y + MAX_LEN);
+    for (int  i = 0; i < nX; i++) {
+        SDL_RenderDrawLine( gRenderer, x + i * 40, y, x + i * 40, y + lenY);
     }
 }
 
@@ -169,7 +177,7 @@ void showMap(int x, int y, int** map) {
             SDL_RenderFillRect( gRenderer, &fillRect );
         }
     }
-    showMesh(x,y);
+    showMesh(x,y,11,11,MAX_LEN,MAX_LEN);
     updateView();
 }
 
@@ -374,6 +382,8 @@ bool setHumanShipsAction(Player *pPlayer) {
     Ship *ship;
     Point* points;
 
+    showAvalibleShips(0,440,shipTab[shipNr],pointNr);
+
     while (true) {
         while (SDL_PollEvent(&e) != 0) {
 
@@ -435,20 +445,26 @@ bool setHumanShipsAction(Player *pPlayer) {
                         points[pointNr].setX(x);
                         points[pointNr].setY(y);
                         map[x][y] = 1;
-                        shipTab[shipNr] -= 1;
                         lastX = x;
                         lastY = y;
                         ++pointNr;
 
+                        clearView();
                         showMap(0,0,map);
+                        showAvalibleShips(0,440,shipTab[shipNr],pointNr);
 
                         //zerujemy dane dla kolejnego statku
-                        if (shipTab[shipNr] == 0) {
+                        if (shipTab[shipNr] == pointNr) {
                             state = -2;
                             ++shipNr;
                             pointNr = 0;
                             lastX = -1;
                             lastY = -1;
+
+                            clearView();
+                            showMap(0,0,map);
+                            showAvalibleShips(0,440,shipTab[shipNr],pointNr);
+
                             if (shipNr == 5) {
                                 return true;
                             }
@@ -458,6 +474,27 @@ bool setHumanShipsAction(Player *pPlayer) {
             }
         }
     }
+}
+
+/**
+ * Pokazywanie akualny statkow do ustaiwenia
+ * @param x
+ * @param y
+ * @param i2
+ * @param nr
+ */
+void showAvalibleShips(int x, int y, int len, int nr) {
+    for (int i = 0; i < len; i++) {
+        SDL_Rect fillRect = {x + i * 40, y, 40, 40};
+        if (i < nr) {//statek czerowny
+            SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 0);
+        } else {//statek zielony
+            SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 0);
+        }
+        SDL_RenderFillRect( gRenderer, &fillRect);
+    }
+    showMesh(x, y, len + 1, 2, len * 40, 40);
+    updateView();
 }
 
 /**
@@ -576,7 +613,7 @@ void showConsoleMap(Player *player) {
     }
 }
 
-int main( int argc, char* args[] ) {
+int main(int argc, char **argv) {
 
     if( !init() ) {
         std::cout << "Blad poczas inicjalizacji gry!\n";
@@ -588,6 +625,7 @@ int main( int argc, char* args[] ) {
 
             //Wybor typu gry
             int selection =  menuAction();
+
             if (selection == -1) { // wyjscie z gry
                 return 0;
             } else if (selection == 1 || selection == 2) { //gra z czlowiekiem
@@ -607,7 +645,7 @@ int main( int argc, char* args[] ) {
                 if (selection == 1) { // dla manualnego ustawiania statkow
                     clearView();
                     showMap(0, 0, player1->getMyMap());
-                    showMap(600, 0, player1->getEnemyMap());
+                    //showMap(600, 0, player1->getEnemyMap());
 
                     bool setIsDone = setHumanShipsAction(player1);
                     if (!setIsDone) { //gracz wychodzi z gry

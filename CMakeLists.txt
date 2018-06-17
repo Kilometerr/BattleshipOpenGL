@@ -1,19 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 project(BattleshipOpenGL)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-set(SDL2_PATH "C:\\Users\\Kacper\\Downloads\\SDL2-2.0.8\\x86_64-w64-mingw32")
-set(SDL2_DIR "C:\\Users\\Kacper\\Downloads\\SDL2_image-2.0.3\\x86_64-w64-mingw32")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lmingw32")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(logic/ai-engine)
 include_directories(logic/game-engine)
 include_directories(logic/model)
 
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+
+set(SOURCE_FILES main.cpp)
 add_executable(BattleshipOpenGL
         logic/ai-engine/AiEngine.cpp
         logic/ai-engine/AiEngine.h
@@ -31,4 +29,4 @@ add_executable(BattleshipOpenGL
         )
 
 
-TARGET_LINK_LIBRARIES(BattleshipOpenGL ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})
+TARGET_LINK_LIBRARIES(BattleshipOpenGL SDL2_image SDL2main SDL2 SDL2_ttf)
